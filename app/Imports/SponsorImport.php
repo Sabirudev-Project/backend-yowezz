@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Imports;
+
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\ToCollection;
+
+class SponsorImport implements ToCollection
+{
+    /**
+     * @param Collection $collection
+     */
+    public function collection(Collection $collection)
+    {
+        //
+        $result = [];
+        $result['exist'] = [];
+        foreach ($collection as $row) {
+            $data['sponsor_name'] = $row[0];
+            $data['sponsor_image'] = $row[1];
+            $check = DB::table('sponsor')->where('sponsor_name', '=', $data['sponsor_name'])->get();
+            if ($check->count() == 0) {
+                $insert = DB::table('sponsor')->insert($data);
+                array_push($result, $data);
+            } else {
+                array_push($result['exist'], $data);
+            }
+        }
+        return $result;
+    }
+}
