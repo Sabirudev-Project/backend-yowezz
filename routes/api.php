@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\ChatController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1/users')->group(function () {
     //users
-    Route::get('messages', [Users::class, 'fetch_message']);
-    Route::post('messages', [Users::class, 'send_message']);
+    Route::get('messages', [ChatController::class, 'fetch_message']);
+    Route::post('messages', [ChatController::class, 'send_message']);
 });
