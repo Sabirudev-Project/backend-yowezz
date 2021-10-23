@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Exports\UserExport;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\DISC\AuthAPI;
 use App\Http\Controllers\DISC\JsonReturn;
@@ -37,17 +38,36 @@ class AdminController extends Controller
         }
     }
 
+    public function export_excel_users(Request $request)
+    {
+        $table = 'users';
+        if (AuthAPI::get_auth_api($request)) {
+            $data = $request->all();
+            $fileName = 'users' . date('ymdHis') . ".xlsx";
+            $path = $table . '/' . $fileName;
+            $imageUrl = url('storage/users') . '/' . $fileName;
+            Excel::store(new UserExport, $path, 'public');
+            return JsonReturn::successReturn("Succes get Dashboard Data", $imageUrl, $table, $request);
+        } else {
+            return JsonReturn::failedReturn('Unauthorized', $table, $request);
+        }
+    }
+
     public function create_users(Request $request)
     {
         $table = "users";
         if (AuthAPI::get_auth_api($request)) {
             $data = $request->all();
-            $insert = DB::table($table)->insert($data);
-            if ($insert) {
-                return JsonReturn::successReturn("Create data " . $table, $data, $table, $request);
-            } else {
-                return JsonReturn::failedReturn('Failed create ' . $table, $table, $request);
+
+            $listData = [];
+            for ($a = 0; $a < $data['count']; $a++) {
+                $insert['email'] = $data['email'];
+                $insert['uuid'] = "SPSTWN" . date('dmy') . $a . Str::random(2);
+                $insert['password'] = Str::random(10);
+                DB::table($table)->insert($insert);
+                array_push($listData, $insert);
             }
+            return JsonReturn::successReturn("Create data " . $table, $listData, $table, $request);
         } else {
             return JsonReturn::failedReturn('Unauthorized', $table, $request);
         }

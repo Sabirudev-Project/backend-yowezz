@@ -31,7 +31,7 @@ class ChatController extends Controller
             $data = $request->all();
             $insert = DB::table($table)->insert($data);
             if ($insert) {
-                broadcast(new ChatEvent($data))->toOthers();
+                // broadcast(new ChatEvent($data))->toOthers();
                 return JsonReturn::successReturn("Get data " . $table, $data, $table, $request);
             } else {
                 return JsonReturn::failedReturn('failed sending message', $table, $request);
