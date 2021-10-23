@@ -17,7 +17,7 @@ class UsersController extends Controller
         $table = 'users';
         if (AuthAPI::get_auth_api($request)) {
             $data = $request->all();
-            $getUser = DB::table($table)->where('email', '=', $data['email'])->first();
+            $getUser = DB::table($table)->where('uuid', '=', $data['uuid'])->first();
             if (Hash::check($data['password'], $getUser['password'])) {
                 return JsonReturn::successReturn("Get data " . $table, $getUser, $table, $request);
             } else {
@@ -39,7 +39,7 @@ class UsersController extends Controller
         }
     }
 
-    public function view(Request $request, $table)
+    public function view_content(Request $request, $table)
     {
         if (AuthAPI::get_auth_api($request)) {
             $data = $request->all();

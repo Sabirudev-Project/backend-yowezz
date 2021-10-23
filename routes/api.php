@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AdminController;
 use App\Http\Controllers\API\ChatController;
+use App\Http\Controllers\API\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,9 +18,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1/users')->group(function () {
-    //users
+    //live chat
     Route::get('messages', [ChatController::class, 'fetch_message']);
     Route::post('messages', [ChatController::class, 'send_message']);
+
+    //user profile
+    Route::post('login', [UsersController::class, 'login']);
+    Route::post('update', [UsersController::class, 'update']);
+    Route::post('view/{table}', [UsersController::class, 'view_content']);
 });
 
 Route::prefix('v1/admin')->group(function () {
@@ -56,4 +62,8 @@ Route::prefix('v1/admin')->group(function () {
     Route::put('bazzar/{index}', [AdminController::class, 'update_bazzar']);
     Route::delete('bazzar/{index}', [AdminController::class, 'delete_bazzar']);
     Route::post('bazzar_import', [AdminController::class, 'import_bazzar']);
+
+
+    //Export User
+    Route::get('export_excel_users', [AdminController::class, 'export_excel_users']);
 });
