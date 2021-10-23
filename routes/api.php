@@ -24,7 +24,7 @@ Route::prefix('v1/users')->group(function () {
 
     //user profile
     Route::post('login', [UsersController::class, 'login']);
-    Route::post('update', [UsersController::class, 'update']);
+    Route::post('update/{index}', [UsersController::class, 'update']);
     Route::post('view/{table}', [UsersController::class, 'view_content']);
 });
 

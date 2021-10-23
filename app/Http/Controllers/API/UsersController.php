@@ -17,11 +17,12 @@ class UsersController extends Controller
         $table = 'users';
         if (AuthAPI::get_auth_api($request)) {
             $data = $request->all();
-            $getUser = DB::table($table)->where('uuid', '=', $data['uuid'])->first();
-            if (Hash::check($data['password'], $getUser['password'])) {
+            $getUser = DB::table($table)->where('uuid', '=', $data['uuid'])->where('password', '=', $data['password'])->first();
+            if ($getUser) {
+                unset($getUser->password);
                 return JsonReturn::successReturn("Get data " . $table, $getUser, $table, $request);
             } else {
-                return JsonReturn::failedReturn('Email or Password Incorrect', $table, $request);
+                return JsonReturn::failedReturn('User Id or Password Incorrect', $table, $request);
             }
         } else {
             return JsonReturn::failedReturn('Unauthorized', $table, $request);
@@ -34,6 +35,9 @@ class UsersController extends Controller
         if (AuthAPI::get_auth_api($request)) {
             $data = $request->all();
             $update = DB::table($table)->where('id', '=', $index)->update($data);
+            $getUser = DB::table($table)->where('id', '=', $index)->first();
+            unset($getUser->password);
+            return JsonReturn::successReturn('Berhasil update data', $getUser, $table, $request);
         } else {
             return JsonReturn::failedReturn('Unauthorized', $table, $request);
         }
@@ -44,6 +48,7 @@ class UsersController extends Controller
         if (AuthAPI::get_auth_api($request)) {
             $data = $request->all();
             $insert = DB::table($table)->insert($data);
+            return JsonReturn::successReturn('Berhasil insert view data', $data, $table, $request);
         } else {
             return JsonReturn::failedReturn('Unauthorized', $table, $request);
         }
